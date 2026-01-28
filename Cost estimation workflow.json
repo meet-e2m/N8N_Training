@@ -1,0 +1,207 @@
+{
+  "name": "Cost estimation workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Cost Estimation Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "No. of Mails",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Tasks per mail",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Price per task",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a26e9733-3ee4-4ac7-866c-9afc160c9df1",
+      "name": "On form submission",
+      "webhookId": "e84c75b1-c7cd-4871-b584-2bad7dc7378c"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read input values (bracket notation is required because of spaces and dots)\nconst noOfMails = Number($json[\"No. of Mails\"]);\nconst tasksPerMail = Number($json[\"Tasks per mail\"]);\nconst pricePerTask = Number($json[\"Price per task\"]);\n\n// Calculations\nconst tasksPerDay = noOfMails * tasksPerMail;\nconst tasksPerMonth = tasksPerDay * 30;\nconst priceTask = tasksPerMonth * pricePerTask;\nconst savings = priceTask - 50;\n\n// Return output\nreturn [\n  {\n    json: {\n      \"No. of Mails\": noOfMails,\n      \"Tasks per mail\": tasksPerMail,\n      \"Tasks per day\": tasksPerDay,\n      \"Tasks per month\": tasksPerMonth,\n      \"Price task\": priceTask,\n      \"Savings\": savings\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a8e50ac9-4937-4c12-a27e-0edf806577e5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GMT2qrUfhPu9tAXJt9jZe7Chj2bcyLsazfGcHXjCa34",
+          "mode": "list",
+          "cachedResultName": "Cost Estimation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GMT2qrUfhPu9tAXJt9jZe7Chj2bcyLsazfGcHXjCa34/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GMT2qrUfhPu9tAXJt9jZe7Chj2bcyLsazfGcHXjCa34/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Emails/Day": "={{ $json['No. of Mails'] }}",
+            "Tasks/Day": "={{ $json['Tasks per day'] }}",
+            "Zapier cost/Month": "={{ $json['Price task'] }}",
+            "Tasks/Month": "={{ $json['Tasks per month'] }}",
+            "N8N cost/Month": "50",
+            "Tasks/Mail": "={{ $json['Tasks per mail'] }}",
+            "Savings/month": "={{ $json.Savings }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Emails/Day",
+              "displayName": "Emails/Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tasks/Mail",
+              "displayName": "Tasks/Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tasks/Day",
+              "displayName": "Tasks/Day",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tasks/Month",
+              "displayName": "Tasks/Month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Zapier cost/Month",
+              "displayName": "Zapier cost/Month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "N8N cost/Month",
+              "displayName": "N8N cost/Month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Savings/month",
+              "displayName": "Savings/month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        0
+      ],
+      "id": "fe1d3154-94ae-4f8d-9f24-e1055cbe49a6",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HYNfvkgGhOh7Qb2N",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "232916ee-d115-44d6-a6f9-595ede046a29",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "429e7fb24ec72fecb380a3b44b610a7df11989a4d57d9ae0900a2ecaa780e49d"
+  },
+  "id": "zaMzgOgbt8Z8LgH7SdIoq",
+  "tags": []
+}
