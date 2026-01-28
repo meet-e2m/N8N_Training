@@ -1,0 +1,162 @@
+{
+  "name": "Webscraper simple workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Data scraper",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Company Name"
+            },
+            {
+              "fieldLabel": "Company URL"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5965f72f-4afb-47bc-a2d1-73f4f05b5837",
+      "name": "On form submission",
+      "webhookId": "d70d3398-d8b1-4a8f-bd29-c38b31d6d684"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Company URL'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5e2b8c88-6061-40ae-8102-ed659675b750",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "cleaned_data",
+              "cssSelector": "body",
+              "skipSelectors": "a,link,button"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "a3bc89da-5c00-4c02-ad5f-081d62ad38a1",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "content": "={{ $json.cleaned_data }}",
+        "name": "={{ $('On form submission').item.json['Company Name'] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "5c8479a1-7394-4ef7-9c41-1e9fb00023eb",
+      "name": "Create file from text",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "MPgLTdbot9PuED8O",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Create file from text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create file from text": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "5cebb136-8fb5-4f66-9f99-41ef04df3066",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "429e7fb24ec72fecb380a3b44b610a7df11989a4d57d9ae0900a2ecaa780e49d"
+  },
+  "id": "AmcDOl1koaWN3PtM5R9hM",
+  "tags": []
+}
